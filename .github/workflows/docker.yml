@@ -3,6 +3,10 @@ name: 'Build and push a docker image'
 on:
   workflow_dispatch:
     inputs:
+      user:
+        description: 'Docker hub user name'
+        required: true
+        default: 'none'
       name:
         description: 'Docker image name'
         required: true
@@ -32,8 +36,10 @@ jobs:
       - name: 'Build and push'
         id: docker_build
         uses: docker/build-push-action@v2
-        with:  
-          tags: ${{ secrets.DOCKERHUB_USER_ID }}/node-simple:'latest'
+        with:
+          context: .
+          file: ./Dockerfile          
+          tags: ${{ inputs.user }}/node-simple:latest
           push: true
       - name: 'Image digest'
         run: echo ${{ steps.docker_build.outputs.digest }}
